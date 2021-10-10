@@ -30,6 +30,11 @@ app.get('/api/hello', function (req, res) {
 });
 
 // endpoint for handling timestamps...
+app.get('/api', function (req, res) {
+  const date = new Date();
+  res.json({ unix: date.getTime(), utc: date.toUTCString() });
+});
+
 app.get('/api/:date', function (req, res) {
   const dateParam = req.params.date;
   let date = undefined;
@@ -38,19 +43,24 @@ app.get('/api/:date', function (req, res) {
     dateParam,
   });
 
-  if (!dateParam) {
-    date = new Date();
-    res.json({ unix: date.getTime(), utc: date.toUTCString() });
+  if (/^\d{1,}$/gm.test(dateParam)) {
+    date = new Date(parseInt(dateParam));
+  } else {
+    date = new Date(dateParam);
   }
 
-  try {
-    if (/\d{1,}/gm.test(dateParam)) {
-      date = new Date(parseInt(dateParam));
-    } else {
-      date = new Date(dateParam);
+  let isValidDate = true;
+  if (Object.prototype.toString.call(date) === '[object Date]') {
+    if (isNaN(date.getTime())) {
+      // d.valueOf() could also work
+      isValidDate = false;
     }
-  } catch (error) {
-    Logger.error(`Server.handleTimestamp.invalidDate`, error);
+  } else {
+    isValidDate = false;
+  }
+
+  if (!isValidDate) {
+    Logger.error(`Server.handleTimestamp.invalidDate`);
     res.json({ error: 'Invalid Date' });
   }
 
