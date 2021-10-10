@@ -1,8 +1,12 @@
 // server.js
 // where your node app starts
 
+const express = require('express');
+const rTracer = require('cls-rtracer');
+const { ApiLoggerMiddleware, Logger } = require('./logger');
+require('dotenv').config();
+
 // init project
-var express = require('express');
 var app = express();
 
 // enable CORS (https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
@@ -12,6 +16,8 @@ app.use(cors({ optionsSuccessStatus: 200 })); // some legacy browsers choke on 2
 
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static('public'));
+
+app.use(rTracer.expressMiddleware(), ApiLoggerMiddleware);
 
 // http://expressjs.com/en/starter/basic-routing.html
 app.get('/', function (req, res) {
@@ -23,7 +29,36 @@ app.get('/api/hello', function (req, res) {
   res.json({ greeting: 'hello API' });
 });
 
+// endpoint for handling timestamps...
+app.get('/api/:date', function (req, res) {
+  const dateParam = req.params.date;
+  let date = undefined;
+
+  Logger.info(`Server.handleTimestamp.started`, {
+    dateParam,
+  });
+
+  if (!dateParam) {
+    date = new Date();
+    res.json({ unix: date.getTime(), utc: date.toUTCString() });
+  }
+
+  try {
+    if (/\d{1,}/gm.test(dateParam)) {
+      date = new Date(parseInt(dateParam));
+    } else {
+      date = new Date(dateParam);
+    }
+  } catch (error) {
+    Logger.error(`Server.handleTimestamp.invalidDate`, error);
+    res.json({ error: 'Invalid Date' });
+  }
+
+  Logger.info(`Server.handleTimestamp.success`, { date });
+  res.json({ unix: date.getTime(), utc: date.toUTCString() });
+});
+
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
-  console.log('Your app is listening on port ' + listener.address().port);
+  Logger.info('Server', `Your app is listening on port ${listener.address().port}`);
 });
