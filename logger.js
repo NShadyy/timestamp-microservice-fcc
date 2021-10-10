@@ -7,6 +7,7 @@ const {
   requestWhitelist,
   responseWhitelist,
 } = require('express-winston');
+require('winston-daily-rotate-file');
 
 const OMITTED_KEYS_FROM_LOG_OBJECT = [
   'message',
@@ -18,7 +19,6 @@ const OMITTED_KEYS_FROM_LOG_OBJECT = [
   'meta.res',
 ];
 const CONFIGURED_LOG_LEVEL = process.env.LOG_LEVEL || 'info';
-const TEN_MBS_IN_BYTES = 10000000;
 
 const getRequestMetaData = (req, res) => {
   if (!req || !res) {
@@ -57,11 +57,14 @@ const addCustomAttributesToLogObject = format((info, opts) => {
 
 const CONFIGURED_TRANSPORTS = [
   new transports.Console({ level: CONFIGURED_LOG_LEVEL }),
-  new transports.File({
+  new transports.DailyRotateFile({
     dirname: 'logs',
-    filename: `server-${new Date().getTime()}.log`,
-    maxsize: TEN_MBS_IN_BYTES,
     level: CONFIGURED_LOG_LEVEL,
+    filename: 'application-%DATE%.log',
+    datePattern: 'YYYY-MM-DD',
+    zippedArchive: true,
+    maxSize: '10m',
+    maxFiles: '14d',
   }),
 ];
 

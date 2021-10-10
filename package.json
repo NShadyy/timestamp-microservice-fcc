@@ -1,7 +1,7 @@
 {
-  "name": "fcc-api-projects-boilerplate",
+  "name": "timestamp-microservice-fcc",
   "version": "0.0.1",
-  "description": "An FCC Backend Challenge",
+  "description": "Challenge project for FreeCodeCamp's 'Back End Development and APIs' Course",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -15,20 +15,25 @@
     "express": "^4.12.4",
     "express-winston": "^4.2.0",
     "lodash": "^4.17.21",
-    "winston": "^3.3.3"
+    "winston": "^3.3.3",
+    "winston-daily-rotate-file": "^4.5.5"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.13"
   },
   "repository": {
     "type": "git",
-    "url": "https://githost.com/camper/repo.git"
+    "url": "https://github.com/NShadyy/timestamp-microservice-fcc"
   },
   "keywords": [
     "node",
-    "hyperdev",
     "express",
     "freecodecamp"
   ],
   "license": "MIT",
-  "devDependencies": {
-    "nodemon": "^2.0.13"
+  "author": {
+    "name": "Nakul Sharma",
+    "email": "nakul.165376@gmail.com",
+    "url": "https://www.linkedin.com/in/nakul5harma/"
   }
 }
