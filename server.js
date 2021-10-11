@@ -32,8 +32,8 @@ app.get('/api/hello', function (req, res) {
 
 // endpoint for handling timestamps...
 app.get('/api', function (req, res) {
-  const date = new Date();
-  res.json({ unix: date.getTime(), utc: date.toUTCString() });
+  const now = Date.now();
+  res.json({ unix: now, utc: new Date(now).toUTCString() });
 });
 
 app.get('/api/:date', function (req, res) {
