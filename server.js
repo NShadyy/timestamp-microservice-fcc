@@ -32,7 +32,7 @@ app.get('/api/hello', function (req, res) {
 
 // endpoint for handling timestamps...
 app.get('/api', function (req, res) {
-  const now = Date.now();
+  const now = Date.now() - 20000;
   res.json({ unix: now, utc: new Date(now).toUTCString() });
 });
 
@@ -53,7 +53,6 @@ app.get('/api/:date', function (req, res) {
   let isValidDate = true;
   if (Object.prototype.toString.call(date) === '[object Date]') {
     if (isNaN(date.getTime())) {
-      // d.valueOf() could also work
       isValidDate = false;
     }
   } else {
